@@ -2,7 +2,6 @@ package np.com.grishma.cameramodule;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,13 +34,14 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         imageView = (ImageView) findViewById(R.id.imageView);
+        Glide.with(this).load(R.drawable.maxresdefault).into(imageView);
     }
 
     public void openCamera(View view) {
         String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         if (EasyPermissions.hasPermissions(this, perms)) {
-           takePhoto();
+            takePhoto();
         } else {
             // Do not have permissions, request them now
             EasyPermissions.requestPermissions(this, "Camera permission needed and storage also", REQUEST_TAKE_PHOTO, perms);
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     public void takePhoto() {
         Toast.makeText(this, "Camera opened", Toast.LENGTH_SHORT).show();
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -61,11 +64,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "np.com.grishma.cameramodule",
-                        photoFile);
-
-                takePictureIntent.putExtra(MediaStore.ACTION_IMAGE_CAPTURE, photoURI);
+                Uri photoURI = FileProvider.getUriForFile(this, "np.com.grishma.cameramodule", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
@@ -74,9 +74,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imageBitmap);
+//            Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+//            Bitmap resized = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mCurrentPhotoPath), 200, 200);
+//            imageView.setImageBitmap(resized);
+            Glide.with(this).load(mCurrentPhotoPath).thumbnail(0.1f).into(imageView);
+
         }
     }
 
@@ -111,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @Override
     public void onPermissionsDenied(int requestCode, List<String> list) {
-        Toast.makeText(this, "nay", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Some permissions denied", Toast.LENGTH_SHORT).show();
     }
 }
 
