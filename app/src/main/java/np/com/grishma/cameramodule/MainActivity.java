@@ -8,6 +8,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,6 +30,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     static final int REQUEST_TAKE_PHOTO = 1;
     String mCurrentPhotoPath;
     ImageView imageView;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    String myDataset[]={"abc", "bfsdf"};
 
 
     @Override
@@ -35,6 +42,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_main);
         imageView = (ImageView) findViewById(R.id.imageView);
         Glide.with(this).load(R.drawable.maxresdefault).into(imageView);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        mLayoutManager = new GridLayoutManager(this, 2);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // specify an adapter (see also next example)
+        mAdapter = new AlbumRecyclerViewAdapter(myDataset, MainActivity.this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     public void openCamera(View view) {
