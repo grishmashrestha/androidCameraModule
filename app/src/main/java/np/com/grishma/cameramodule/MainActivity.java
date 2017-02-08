@@ -9,7 +9,6 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,11 +30,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     static final int REQUEST_TAKE_PHOTO = 1;
     String mCurrentPhotoPath;
     ImageView imageView;
+    String myDataset[] = null;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    String myDataset[]={"abc", "bfsdf"};
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,19 +42,26 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         imageView = (ImageView) findViewById(R.id.imageView);
         Glide.with(this).load(R.drawable.maxresdefault).into(imageView);
 
+//        set up recyclerView
+        fetchImages();
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
         mLayoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
         mAdapter = new AlbumRecyclerViewAdapter(myDataset, MainActivity.this);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void fetchImages() {
+        Log.e("MainActivity", "test");
+        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        myDataset = dir.list(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                if (new File(dir, name).isDirectory())
+                    return false;
+                return name.toLowerCase().endsWith(".jpg");
+            }
+        });
     }
 
     public void openCamera(View view) {
@@ -64,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         if (EasyPermissions.hasPermissions(this, perms)) {
             takePhoto();
         } else {
-            // Do not have permissions, request them now
             EasyPermissions.requestPermissions(this, "Camera permission needed and storage also", REQUEST_TAKE_PHOTO, perms);
         }
     }
@@ -95,11 +100,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-//            Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-//            Bitmap resized = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mCurrentPhotoPath), 200, 200);
-//            imageView.setImageBitmap(resized);
             Glide.with(this).load(mCurrentPhotoPath).thumbnail(0.1f).into(imageView);
-
         }
     }
 
@@ -113,9 +114,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-
-        // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
+        Log.e("MainActivity", mCurrentPhotoPath);
         return image;
     }
 

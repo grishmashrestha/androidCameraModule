@@ -1,6 +1,10 @@
 package np.com.grishma.cameramodule;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
+import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -10,15 +14,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import static np.com.grishma.cameramodule.R.id.imageView;
-
-/**
- * Created by leapfrogmac on 2/8/17.
- */
-
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
-    private String[] mDataset;
     Context context;
+    private String[] mDataset;
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public AlbumRecyclerViewAdapter(String[] myDataset, Context context) {
@@ -44,7 +42,7 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.mTextView.setText(mDataset[position]);
-        Glide.with(context).load(R.drawable.maxresdefault).into(holder.imageView);
+        Glide.with(context).load(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + mDataset[position]).thumbnail(0.1f).into(holder.imageView);
     }
 
     // Return the size of your dataset (invoked by the layout manager)
