@@ -8,8 +8,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,7 +16,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,10 +27,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     static final int REQUEST_TAKE_PHOTO = 1;
     String mCurrentPhotoPath;
     ImageView imageView;
-    String myDataset[] = null;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,28 +34,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_main);
         imageView = (ImageView) findViewById(R.id.imageView);
         Glide.with(this).load(R.drawable.maxresdefault).into(imageView);
-
-//        set up recyclerView
-        fetchImages();
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(this, 2);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new AlbumRecyclerViewAdapter(myDataset, MainActivity.this);
-        mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void fetchImages() {
-        Log.e("MainActivity", "test");
-        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        myDataset = dir.list(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                if (new File(dir, name).isDirectory())
-                    return false;
-                return name.toLowerCase().endsWith(".jpg");
-            }
-        });
-    }
 
     public void openCamera(View view) {
         String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -72,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         } else {
             EasyPermissions.requestPermissions(this, "Camera permission needed and storage also", REQUEST_TAKE_PHOTO, perms);
         }
+    }
+
+    public void openGallery(View view) {
+        startActivity(new Intent(this, GalleryActivity.class));
     }
 
     public void takePhoto() {
