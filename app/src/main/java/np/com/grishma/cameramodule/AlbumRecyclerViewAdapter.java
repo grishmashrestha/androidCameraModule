@@ -11,12 +11,12 @@ import android.widget.LinearLayout;
 import com.bumptech.glide.Glide;
 
 public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecyclerViewAdapter.ViewHolder> {
-    Context context;
-    private String[] mDataset;
+    private Context context;
+    private String[] dataset;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public AlbumRecyclerViewAdapter(String[] myDataset, Context context) {
-        mDataset = myDataset;
+    public AlbumRecyclerViewAdapter(String[] dataset, Context context) {
+        this.dataset = dataset;
         this.context = context;
     }
 
@@ -27,18 +27,17 @@ public class AlbumRecyclerViewAdapter extends RecyclerView.Adapter<AlbumRecycler
         LinearLayout v = (LinearLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.album_recycler_view, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v);
-        return vh;
+        return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Glide.with(context).load(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + mDataset[position]).thumbnail(0.1f).into(holder.imageView);
+        Glide.with(context).load(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + dataset[position]).thumbnail(0.1f).into(holder.imageView);
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.length;
+        return dataset.length;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

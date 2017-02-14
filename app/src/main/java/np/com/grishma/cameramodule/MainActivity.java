@@ -25,7 +25,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     static final int REQUEST_TAKE_PHOTO = 1;
-    String mCurrentPhotoPath;
+    String currentPhotoPath;
     ImageView imageView;
 
     @Override
@@ -36,14 +36,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Glide.with(this).load(R.drawable.maxresdefault).into(imageView);
     }
 
-
     public void openCamera(View view) {
-        String[] perms = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-        if (EasyPermissions.hasPermissions(this, perms)) {
+        if (EasyPermissions.hasPermissions(this, permissions)) {
             takePhoto();
         } else {
-            EasyPermissions.requestPermissions(this, "Camera permission needed and storage also", REQUEST_TAKE_PHOTO, perms);
+            EasyPermissions.requestPermissions(this, "Camera permission needed and storage also", REQUEST_TAKE_PHOTO, permissions);
         }
     }
 
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            Glide.with(this).load(mCurrentPhotoPath).thumbnail(0.1f).into(imageView);
+            Glide.with(this).load(currentPhotoPath).thumbnail(0.1f).into(imageView);
         }
     }
 
@@ -91,8 +90,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-        mCurrentPhotoPath = image.getAbsolutePath();
-        Log.e("MainActivity", mCurrentPhotoPath);
+        currentPhotoPath = image.getAbsolutePath();
         return image;
     }
 

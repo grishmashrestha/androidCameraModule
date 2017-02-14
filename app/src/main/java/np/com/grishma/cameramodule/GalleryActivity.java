@@ -11,10 +11,10 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 public class GalleryActivity extends AppCompatActivity {
-    String myDataset[] = null;
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    String dataset[] = null;
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,20 +22,18 @@ public class GalleryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_gallery);
 
 //        set up recycler view
-
         fetchImages();
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new GridLayoutManager(this, 2);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new AlbumRecyclerViewAdapter(myDataset, GalleryActivity.this);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new AlbumRecyclerViewAdapter(dataset, GalleryActivity.this);
+        recyclerView.setAdapter(adapter);
     }
 
     private void fetchImages() {
-        Log.e("MainActivity", "test");
         File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        myDataset = dir.list(new FilenameFilter() {
+        dataset = dir.list(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 if (new File(dir, name).isDirectory())
                     return false;
