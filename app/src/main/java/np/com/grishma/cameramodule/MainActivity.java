@@ -18,9 +18,11 @@ import com.bumptech.glide.Glide;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
@@ -110,6 +112,17 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onPermissionsDenied(int requestCode, List<String> list) {
         Toast.makeText(this, "Some permissions denied", Toast.LENGTH_SHORT).show();
+
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, list)) {
+            new AppSettingsDialog.Builder(this)
+                    .setTitle("Get Settings")
+                    .setPositiveButton("Settings")
+                    .setRationale("Ask again")
+                    .setNegativeButton("Cancel", null)
+                    .setRequestCode(REQUEST_TAKE_PHOTO)
+                    .build()
+                    .show();
+        }
     }
 }
 
